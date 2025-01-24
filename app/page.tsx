@@ -1,15 +1,20 @@
+'use client';
+
 import { Suspense } from 'react';
-import { getVideos } from '@/utils/videos/videos';
+import { useVideos } from '@/hooks/videoHooks/useVideos';
 import { VideoCard } from '@/components/videos/VideoCard';
 
 export const dynamic = 'force-dynamic';
 
-async function VideoGrid() {
-  const videos = await getVideos();
+function VideoGrid() {
+  const { data: videos, isLoading, error } = useVideos();
+  
+  if (isLoading) return <VideoGridSkeleton />;
+  if (error) return <div>Error loading videos</div>;
   
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {videos.map((video) => (
+      {videos?.map((video) => (
         <VideoCard key={video.id} video={video} />
       ))}
     </div>
@@ -40,3 +45,4 @@ function VideoGridSkeleton() {
     </div>
   );
 }
+

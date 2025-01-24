@@ -5,7 +5,6 @@ import { signInWithGoogleAction } from "@/app/actions";
 
 export function GoogleSignInButton() {
   return (
-    <form >
       <Button
         onClick={signInWithGoogleAction}
         variant="outline"
@@ -31,6 +30,5 @@ export function GoogleSignInButton() {
         </svg>
         Continue with Google
       </Button>
-    </form>
   );
 } 
