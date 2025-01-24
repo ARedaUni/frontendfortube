@@ -1,16 +1,42 @@
-import Hero from "@/components/hero";
-import ConnectSupabaseSteps from "@/components/tutorial/connect-supabase-steps";
-import SignUpUserSteps from "@/components/tutorial/sign-up-user-steps";
-import { hasEnvVars } from "@/utils/supabase/check-env-vars";
+import { Suspense } from 'react';
+import { getVideos } from '@/utils/videos/videos';
+import { VideoCard } from '@/components/videos/VideoCard';
 
-export default async function Home() {
+export const dynamic = 'force-dynamic';
+
+async function VideoGrid() {
+  const videos = await getVideos();
+  
   return (
-    <>
-      <Hero />
-      <main className="flex-1 flex flex-col gap-6 px-4">
-        <h2 className="font-medium text-xl mb-4">Next steps</h2>
-        {hasEnvVars ? <SignUpUserSteps /> : <ConnectSupabaseSteps />}
-      </main>
-    </>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {videos.map((video) => (
+        <VideoCard key={video.id} video={video} />
+      ))}
+    </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <main className="flex-1 flex flex-col gap-6 px-4">
+      <h1 className="text-2xl font-bold">Latest Videos</h1>
+      <Suspense fallback={<VideoGridSkeleton />}>
+        <VideoGrid />
+      </Suspense>
+    </main>
+  );
+}
+
+function VideoGridSkeleton() {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div key={i} className="space-y-2">
+          <div className="aspect-video bg-muted rounded-lg animate-pulse" />
+          <div className="h-4 bg-muted rounded w-3/4 animate-pulse" />
+          <div className="h-3 bg-muted rounded w-1/2 animate-pulse" />
+        </div>
+      ))}
+    </div>
   );
 }
